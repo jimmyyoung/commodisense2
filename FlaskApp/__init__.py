@@ -17,6 +17,15 @@ def bapi():
 def hello():
     return "hi"
 
+@app.route("/fastparse")
+@app.route("/fastparse/<ticker>")
+def parseTicker(ticker=None):
+    if not ticker:
+	return '{"error":"Empty Ticker"}'
+    ticker = ticker.replace('_', ' ')
+    ticker = tickPredict.parse(ticker)
+    return ticker
+
 @app.route("/getdata")
 @app.route("/getdata/<ticker>")
 def getData(ticker=None):
