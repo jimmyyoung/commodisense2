@@ -14,8 +14,16 @@ def bapi():
 
 @app.route("/")
 def hello():
+    return "hi"
+
+@app.route("/getdata")
+@app.route("/getdata/<ticker>")
+def getData(ticker=None):
+    if not ticker:
+	return '{"error":"Empty Ticker"}'
     #if (name === None) return '{"error":"No Ticker Provided"}'
-    a = getMarketData.main()
+    ticker = ticker.replace('_', ' ')
+    a = getMarketData.main(ticker)
     return a
 
 if __name__ == "__main__":

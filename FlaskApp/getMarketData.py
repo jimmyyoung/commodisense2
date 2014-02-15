@@ -25,7 +25,7 @@ def parseCmdLine():
     return options
 
 
-def main():
+def main(ticker):
     global options
     options = parseCmdLine()
 
@@ -52,7 +52,8 @@ def main():
     request = refDataService.createRequest("ReferenceDataRequest")
 
     # append securities to request
-    request.append("securities", "IBM US Equity")
+    request.append("securities", ticker)
+    #request.append("securities", "IBM US Equity")
 
     # append fields to request
     request.append("fields", "PX_LAST")
@@ -69,6 +70,10 @@ def main():
             for msg in ev:
                 if msg.hasElement('securityData'):
 			data_last = msg.getElement('securityData').getValue(0).getElement('fieldData');
+			if not data_last.hasElement('DS002'):
+				return '{"error":' + ticker + ' not found"}'
+			if not data_last.hasElement('PX_LAST'):
+				return '{"error":"Current Price Not Available"}'
 			data_price = data_last.getElement('PX_LAST').getValue(0)
 			data_desc = data_last.getElement('DS002').getValue(0)
 			a = { "price" : data_price,
