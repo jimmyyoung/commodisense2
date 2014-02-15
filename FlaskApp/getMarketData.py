@@ -57,7 +57,9 @@ def main(ticker):
 
     # append fields to request
     request.append("fields", "PX_LAST")
-    request.append("fields", "DS002")
+    request.append("fields", "DS002") #Description
+    request.append("fields", "BID")
+    request.append("fields", "ASK")
 
     #print "Sending Request:", request
     session.sendRequest(request)
@@ -76,8 +78,18 @@ def main(ticker):
 				return '{"error":"Current Price Not Available"}'
 			data_price = data_last.getElement('PX_LAST').getValue(0)
 			data_desc = data_last.getElement('DS002').getValue(0)
+			data_bid = None;
+			data_ask = None;
+			if data_last.hasElement('BID'):
+				data_bid = data_last.getElement('BID').getValue(0)
+			if data_last.hasElement('ASK'):
+				data_ask = data_last.getElement('ASK').getValue(0)
+
 			a = { "price" : data_price,
-			      "desc" : data_desc }
+			      "desc" : data_desc,
+			      "bid" : data_bid,
+			      "ask" : data_ask      
+			}
 			return str(json.dumps(a))
 	# Response completly received, so we could exit
             if ev.eventType() == blpapi.Event.RESPONSE:
