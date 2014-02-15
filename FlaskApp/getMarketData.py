@@ -85,10 +85,11 @@ def main(ticker):
 			if data_last.hasElement('ASK'):
 				data_ask = data_last.getElement('ASK').getValue(0)
 
-			a = { "price" : data_price,
+			a = { "ticker" : ticker,
+			      "price" : data_price,
 			      "desc" : data_desc,
 			      "bid" : data_bid,
-			      "ask" : data_ask      
+			      "ask" : data_ask  
 			}
 			return str(json.dumps(a))
 	# Response completly received, so we could exit

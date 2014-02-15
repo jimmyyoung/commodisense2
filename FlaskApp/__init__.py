@@ -5,6 +5,7 @@ import blpapi
 from optparse import OptionParser
 
 import getMarketData
+import tickPredict
 
 @app.route('/bapi')
 def bapi():
@@ -23,6 +24,7 @@ def getData(ticker=None):
 	return '{"error":"Empty Ticker"}'
     #if (name === None) return '{"error":"No Ticker Provided"}'
     ticker = ticker.replace('_', ' ')
+    ticker = tickPredict.parse(ticker)
     a = getMarketData.main(ticker)
     return a
 
