@@ -81,13 +81,6 @@ def main():
         # Stop the session
         session.stop()
 
-if __name__ == "__main__":
-    print "SimpleRefDataExample"
-    try:
-        main()
-    except KeyboardInterrupt:
-        print "Ctrl+C pressed. Stopping..."
-
 __copyright__ = """
 Copyright 2012. Bloomberg Finance L.P.
 
