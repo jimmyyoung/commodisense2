@@ -3,7 +3,7 @@ app = Flask(__name__)
 
 import blpapi
 from optparse import OptionParser
-
+import json
 import getMarketData
 import tickPredict
 import getSellData
@@ -47,6 +47,17 @@ def getData(ticker=None):
     ticker = tickPredict.parse(ticker)
     a = getMarketData.main(ticker)
     return a
+
+@app.route("/ardy")
+@app.route("/ardy/<ticker>")
+def getGlobalArdyData(ticker=None):
+    if not ticker:
+        return 'Error'
+    ticker = ticker.replace('_', ' ')
+    ticker = tickPredict.parse(ticker)
+    a = getMarketData.main(ticker)
+    b = json.loads(a)
+    return str(b['price'])
 
 if __name__ == "__main__":
     app.run()
