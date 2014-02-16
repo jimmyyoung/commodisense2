@@ -6,6 +6,17 @@ from optparse import OptionParser
 
 import getMarketData
 import tickPredict
+import getSellData
+
+@app.route("/getsell")
+@app.route("/getsell/<ticker>")
+def getSellDatam(ticker=None):
+    if not ticker:
+        return '{"error":"Empty Ticker"}'
+    ticker = ticker.replace('_', ' ')
+    ticker = tickPredict.parse(ticker)
+    a = getSellData.getSells(ticker)
+    return a
 
 @app.route('/bapi')
 def bapi():

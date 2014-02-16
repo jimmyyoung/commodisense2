@@ -30,4 +30,8 @@ def parse(rawTicker):
 		return 'FB US equity'
 	if rawTicker == 'MICROSOFT':
 		return 'MSFT US equity'
+	if rawTicker == 'YAHOO':
+		return 'YHOO equity'
+	if rawTicker == 'TWITTER':
+		return 'TWTR equity'
 	return rawTicker

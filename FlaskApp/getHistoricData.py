@@ -47,19 +47,22 @@ def main(ticker):
     if not session.openService("//blp/refdata"):
         print "Failed to open //blp/refdata"
         return
-
+    
     refDataService = session.getService("//blp/refdata")
-    request = refDataService.createRequest("ReferenceDataRequest")
+    request = refDataService.createRequest("HistoricalDataRequest")
 
     # append securities to request
-    request.append("securities", ticker)
-    #request.append("securities", "IBM US Equity")
+    request.getElement("securities").appendValue(ticker)
+    request.getElement("fields").appendValue("PX_LAST")
+    request.getElement("fields").appendValue("OPEN")
+    request.getElement("fields").appendValue("DS002")    
 
     # append fields to request
-    request.append("fields", "PX_LAST")
-    request.append("fields", "DS002") #Description
-    request.append("fields", "BID")
-    request.append("fields", "ASK")
+    request.set("periodicityAdjustment", "ACTUAL")
+    request.set("periodicitySelection", "WEEKLY")
+    request.set("startDate", "20130101")
+    request.set("endDate", "20141231")
+    request.set("maxDataPoints", 100)
 
     #print "Sending Request:", request
     session.sendRequest(request)
@@ -68,37 +71,19 @@ def main(ticker):
         # Process received events
         while(True):
             # We provide timeout to give the chance to Ctrl+C handling:
-            ev = session.nextEvent(500)
+            ev = session.nextEvent(300)
             for msg in ev:
                 if msg.hasElement('securityData'):
-			data_last = msg.getElement('securityData').getValue(0).getElement('fieldData');
-			if not data_last.hasElement('DS002'):
-				return '{"error":"' + ticker + ' not found"}'
-			if not data_last.hasElement('PX_LAST'):
-				return '{"error":"Current Price Not Available"}'
-			data_price = data_last.getElement('PX_LAST').getValue(0)
-			data_desc = data_last.getElement('DS002').getValue(0)
-			data_bid = None;
-			data_ask = None;
-			if data_last.hasElement('BID'):
-				data_bid = data_last.getElement('BID').getValue(0)
-			if data_last.hasElement('ASK'):
-				data_ask = data_last.getElement('ASK').getValue(0)
-
-			a = { "ticker" : ticker,
-			      "price" : data_price,
-			      "desc" : data_desc,
-			      "bid" : data_bid,
-			      "ask" : data_ask  
-			}
-			return str(json.dumps(a))
+			print(msg)
+			for dta in msg.getElement('securityData').getElement('fieldData').values():
+				data_date = dta.getElement('date').getValue(0)
 	# Response completly received, so we could exit
             if ev.eventType() == blpapi.Event.RESPONSE:
                 break
     finally:
         # Stop the session
         session.stop()
-
+main('KCH4 Comdty')
 __copyright__ = """
 Copyright 2012. Bloomberg Finance L.P.
 
